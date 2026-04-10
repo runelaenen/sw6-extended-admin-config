@@ -1,4 +1,5 @@
 import template from './sw-order-product-select.html.twig';
+import { buildAssociationPath } from '../../../../utils/build-association-path.js';
 
 const DEFAULT_FIELD_CONFIG = [
     { path: 'translated.name', format: null },
@@ -25,14 +26,13 @@ export default {
     computed: {
         productCriteria() {
             const criteria = this.$super('productCriteria');
-            const productAssociations = Shopware.EntityDefinition.get('product').getAssociationFields();
 
             this.fieldConfig
                 .filter(field => field.path)
                 .forEach(field => {
-                    const firstSegment = field.path.split('.')[0];
-                    if (firstSegment && Object.prototype.hasOwnProperty.call(productAssociations, firstSegment)) {
-                        criteria.addAssociation(firstSegment);
+                    const assocPath = buildAssociationPath('product', field.path.split('.'));
+                    if (assocPath.length > 0) {
+                        criteria.addAssociation(assocPath.join('.'));
                     }
                 });
 
@@ -47,8 +47,8 @@ export default {
     methods: {
         async loadFieldConfig() {
             try {
-                const config = await this.systemConfigApiService.getValues('LaenenExtendedProductSelect.config');
-                const raw = config['LaenenExtendedProductSelect.config.fieldConfig'];
+                const config = await this.systemConfigApiService.getValues('LaenenExtendedAdminConfig.config');
+                const raw = config['LaenenExtendedAdminConfig.config.fieldConfig'];
 
                 if (raw) {
                     const parsed = JSON.parse(raw);
@@ -57,7 +57,7 @@ export default {
                     }
                 }
             } catch (e) {
-                console.warn('[LaenenExtendedProductSelect] Could not load field config:', e);
+                console.warn('[LaenenExtendedAdminConfig] Could not load field config:', e);
             }
         },
 

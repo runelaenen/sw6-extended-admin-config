@@ -1,0 +1,15 @@
+{
+    "laenen-extended-admin-config-settings": {
+        "general": {
+            "name": "Extended Admin Config",
+            "title": "Extended Admin Config",
+            "description": "Produktetikett-Felder, Bestelllisten- und Kundenlisten-Spalten konfigurieren"
+        },
+        "page": {
+            "cardTitleProductLabel": "Produktetikett-Felder",
+            "cardTitleOrderColumns": "Bestelllisten-Spalten",
+            "cardTitleCustomerColumns": "Kundenlisten-Spalten",
+            "buttonSave": "Speichern"
+        }
+    }
+}

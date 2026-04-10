@@ -1,0 +1,15 @@
+{
+    "laenen-extended-admin-config-settings": {
+        "general": {
+            "name": "Extended Admin Config",
+            "title": "Extended Admin Config",
+            "description": "Configure product label fields, order list columns, and customer list columns"
+        },
+        "page": {
+            "cardTitleProductLabel": "Product Label Fields",
+            "cardTitleOrderColumns": "Order List Columns",
+            "cardTitleCustomerColumns": "Customer List Columns",
+            "buttonSave": "Save"
+        }
+    }
+}

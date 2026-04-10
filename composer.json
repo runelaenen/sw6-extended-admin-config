@@ -1,21 +1,21 @@
 {
-    "name": "runelaenen/sw6-extended-product-select",
-    "description": "Configurable product select label for the Shopware 6 order form",
+    "name": "runelaenen/sw6-extended-admin-config",
+    "description": "Configurable admin listings and product label for Shopware 6",
     "type": "shopware-platform-plugin",
     "license": "MIT",
     "require": {
         "shopware/core": "~6.6.0"
     },
     "extra": {
-        "shopware-plugin-class": "Laenen\\ExtendedProductSelect\\LaenenExtendedProductSelect",
+        "shopware-plugin-class": "Laenen\\ExtendedAdminConfig\\LaenenExtendedAdminConfig",
         "label": {
-            "de-DE": "Extended Product Select Plugin",
-            "en-GB": "Extended Product Select Plugin"
+            "de-DE": "Extended Admin Config Plugin",
+            "en-GB": "Extended Admin Config Plugin"
         }
     },
     "autoload": {
         "psr-4": {
-            "Laenen\\ExtendedProductSelect\\": "src/"
+            "Laenen\\ExtendedAdminConfig\\": "src/"
         }
     }
 }

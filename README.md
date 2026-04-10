@@ -1,14 +1,19 @@
-# Extended Product Select for Shopware 6
+# LaenenExtendedAdminConfig
 
-Enriches the product search dropdown in the Shopware 6 order form with configurable product data.
+Configurable admin enhancements for Shopware 6. Control which product fields appear in the order form search label, and add custom columns to the Orders and Customers listing pages from the settings page in the admin.
 
-By default, the order line item search shows only the product name. This plugin lets you display any combination of product fields side by side, for example:
+---
 
-```
-Acme Widget Pro | Acme Corp | IN_STOCK | 42 | €29.99
-```
+## Features
 
-The fields shown, their order, and their formatting are all configured from the plugin configuration.
+- **Product label fields**: choose which product fields appear in the order line item search dropdown, their order, and formatting:
+  ```
+  Acme Widget Pro | Acme Corp | 42 | €29.99
+  ```
+- **Order list columns**: add any order entity field as an extra column to the Orders listing, with control over placement and visibility.
+- **Customer list columns**: add any customer entity field as an extra column to the Customers listing, with control over placement and visibility.
+
+All three are configured from **Settings > Plugins > Extended Admin Config**.
 
 ---
 
@@ -24,18 +29,18 @@ The fields shown, their order, and their formatting are all configured from the 
 ### Via Composer (recommended)
 
 ```bash
-composer require laenen/extended-product-select
-bin/console plugin:install --activate LaenenExtendedProductSelect
+composer require runelaenen/sw6-extended-admin-config
+bin/console plugin:install --activate LaenenExtendedAdminConfig
 bin/console cache:clear
 bin/build-administration.sh
 ```
 
 ### Manually
 
-1. Download or clone this repository into `custom/plugins/LaenenExtendedProductSelect`.
+1. Download or clone this repository into `custom/plugins/LaenenExtendedAdminConfig`.
 2. Install and activate the plugin:
    ```bash
-   bin/console plugin:install --activate LaenenExtendedProductSelect
+   bin/console plugin:install --activate LaenenExtendedAdminConfig
    bin/console cache:clear
    ```
 3. Build the administration assets:
@@ -47,43 +52,96 @@ bin/build-administration.sh
 
 ## Configuration
 
-Go to **Extensions > My Extensions**, find **Extended Product Select** and click **Configuration**.
+Go to **Settings > Plugins > Extended Admin Config**. The page has three sections.
 
-Each row in the configuration table represents one field shown in the label:
+### Product Label Fields
 
-| Column | Description |
-|--------|-------------|
-| **Field path** | Dot-notation path into the product object, e.g. `manufacturer.translated.name` |
-| **Active** | Uncheck to hide a field without deleting it |
-| **Currency** | Check to apply Shopware's currency formatter (use for price fields) |
+Configures the label shown for each product in the order line item search dropdown.
+
+| Field | Description |
+|-------|-------------|
+| **Field path** | Dot-notation path into the product entity, e.g. `manufacturer.translated.name` |
+| **Format** | `Raw value` (default) or `Currency` (applies Shopware's currency formatter — use for price fields) |
 | **↑ / ↓** | Reorder fields |
 | **✕** | Remove a field |
 
-Click **+ Add field** to add a new row. Save the configuration and reload the admin to apply changes.
+Fields are joined with ` | ` in the label. Fields whose path resolves to an empty or null value are omitted automatically.
 
-### Associations are loaded automatically
-
-The plugin reads Shopware's entity schema to determine which field paths require an association to be loaded. If you add `manufacturer.translated.name`, the `manufacturer` association is added to the product search query automatically — no manual configuration needed.
-
-### Common field paths
+**Common paths:**
 
 | Path | Description |
 |------|-------------|
 | `translated.name` | Product name (translation-aware) |
 | `productNumber` | Product number / SKU |
 | `manufacturer.translated.name` | Manufacturer name |
-| `customFields.your_field_key` | Any custom field |
 | `stock` | Available stock quantity |
-| `price.0.gross` | Gross price (first price tier) — enable **Currency** format |
+| `price.0.gross` | Gross price (first price tier) — use **Currency** format |
 | `ean` | EAN / GTIN barcode |
 | `weight` | Weight |
+| `customFields.your_field_key` | Any custom field |
 
-### Default configuration
+---
 
-Out of the box the label shows:
+### Order List Columns
 
-```
-Product Name | Manufacturer | Stock | Price
-```
+Adds extra columns to the Orders listing page.
 
-This matches the field set most commonly needed for B2B catalogues. All fields can be removed, reordered, or replaced from the configuration screen.
+| Field | Description |
+|-------|-------------|
+| **Field path** | Dot-notation path into the order entity, e.g. `orderCustomer.email` |
+| **Column label** | Text shown in the column header |
+| **After column** | Property name of an existing column to insert after, e.g. `orderNumber`. Leave empty to append at the end |
+| **Active** | Uncheck to hide a column without deleting it |
+| **↑ / ↓** | Change the order of appended columns |
+| **✕** | Remove a column |
+
+**Common paths:**
+
+| Path | After column example | Description |
+|------|----------------------|-------------|
+| `orderCustomer.email` | `orderCustomer.firstName` | Customer e-mail address |
+| `orderCustomer.company` | `orderCustomer.firstName` | Customer company name |
+| `billingAddress.countryState.name` | `billingAddressId` | Billing state/province |
+| `customFields.your_field_key` | | Any order custom field |
+
+---
+
+### Customer List Columns
+
+Adds extra columns to the Customers listing page.
+
+| Field | Description |
+|-------|-------------|
+| **Field path** | Dot-notation path into the customer entity, e.g. `email` |
+| **Column label** | Text shown in the column header |
+| **After column** | Property name of an existing column to insert after, e.g. `defaultBillingAddress.city`. Leave empty to append at the end |
+| **Active** | Uncheck to hide a column without deleting it |
+| **↑ / ↓** | Change the order of appended columns |
+| **✕** | Remove a column |
+
+**Common paths:**
+
+| Path | After column example | Description |
+|------|----------------------|-------------|
+| `email` | `firstName` | Customer e-mail address |
+| `defaultBillingAddress.countryState.name` | `defaultBillingAddress.city` | Billing state/province |
+| `defaultBillingAddress.country.name` | `defaultBillingAddress.city` | Billing country |
+| `customFields.your_field_key` | | Any customer custom field |
+
+---
+
+## How it works
+
+### Dot-notation paths
+
+All field paths use dot-notation to traverse the entity graph. Array indices are supported where needed (e.g. `price.0.gross` accesses the first element of the price array).
+
+### Associations are loaded automatically
+
+The plugin reads Shopware's entity schema at runtime to determine which segments of a configured path are associations. Only association segments are added to the API query — scalar and JSON fields are excluded. Multi-level paths are fully supported: `billingAddress.countryState.name` causes both `billingAddress` and `countryState` to be loaded.
+
+On the order entity, paths starting with `billingAddress` load their nested associations through the `addresses` collection, which is how Shopware's order data model is structured.
+
+### Column positioning
+
+The **After column** field accepts the `property` value of any existing column (including core Shopware columns). If the value doesn't match any column, the extra column is appended to the end instead. Multiple extra columns targeting the same existing column are inserted in the order they appear in the configuration.

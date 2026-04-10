@@ -1,0 +1,69 @@
+{% block laenen_column_configurator %}
+<div class="laenen-column-configurator">
+
+    <div
+        v-for="(column, index) in columnList"
+        :key="index"
+        class="laenen-column-configurator__row"
+    >
+        <sw-container
+            columns="2fr 1fr 1fr 80px 120px"
+            gap="0 16px"
+            align="end"
+        >
+            <sw-text-field
+                :value="column.path"
+                label="Field path"
+                placeholder="e.g. orderCustomer.email"
+                @update:value="onPathChange(index, $event)"
+            />
+
+            <sw-text-field
+                :value="column.label"
+                label="Column label"
+                placeholder="e.g. Customer e-mail"
+                @update:value="onLabelChange(index, $event)"
+            />
+
+            <sw-text-field
+                :value="column.afterColumn || ''"
+                label="After column"
+                placeholder="e.g. orderNumber"
+                @update:value="onAfterColumnChange(index, $event)"
+            />
+
+            <sw-checkbox-field
+                :value="column.active"
+                label="Active"
+                @update:value="onActiveChange(index, $event)"
+            />
+
+            <div class="laenen-column-configurator__controls">
+                <sw-button
+                    size="x-small"
+                    :disabled="index === 0"
+                    @click="moveUp(index)"
+                >↑</sw-button>
+                <sw-button
+                    size="x-small"
+                    :disabled="index >= columnList.length - 1"
+                    @click="moveDown(index)"
+                >↓</sw-button>
+                <sw-button
+                    size="x-small"
+                    variant="danger"
+                    @click="removeColumn(index)"
+                >✕</sw-button>
+            </div>
+        </sw-container>
+    </div>
+
+    <sw-button
+        size="small"
+        variant="ghost"
+        class="laenen-column-configurator__add"
+        @click="addColumn"
+    >+ Add column</sw-button>
+
+</div>
+{% endblock %}
