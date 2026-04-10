@@ -1,0 +1,13 @@
+{
+    "laenen-product-select-settings": {
+        "general": {
+            "name": "Extended Product Select",
+            "title": "Extended Product Select",
+            "description": "Produktetikett-Felder für die Bestellpositionssuche konfigurieren"
+        },
+        "page": {
+            "cardTitle": "Produktetikett-Felder",
+            "buttonSave": "Speichern"
+        }
+    }
+}

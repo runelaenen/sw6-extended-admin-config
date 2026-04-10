@@ -1,0 +1,53 @@
+{% block laenen_product_select_settings %}
+<sw-page class="laenen-product-select-settings">
+
+    {% block laenen_product_select_settings_smart_bar_header %}
+    <template #smart-bar-header>
+        {% block laenen_product_select_settings_smart_bar_header_title %}
+        <h2>
+            {{ $tc('sw-settings.index.title') }}
+            <sw-icon
+                name="regular-chevron-right-xs"
+                small
+            />
+            {{ $tc('laenen-product-select-settings.general.title') }}
+        </h2>
+        {% endblock %}
+    </template>
+    {% endblock %}
+
+    {% block laenen_product_select_settings_smart_bar_actions %}
+    <template #smart-bar-actions>
+        {% block laenen_product_select_settings_actions_save %}
+        <sw-button-process
+            variant="primary"
+            :is-loading="isLoading"
+            :process-success="isSaveSuccessful"
+            @update:process-success="onSaveFinish"
+            @click="saveConfig"
+        >
+            {{ $tc('laenen-product-select-settings.page.buttonSave') }}
+        </sw-button-process>
+        {% endblock %}
+    </template>
+    {% endblock %}
+
+    {% block laenen_product_select_settings_content %}
+    <template #content>
+        <sw-card-view>
+            <sw-card
+                position-identifier="laenen-product-select-settings-fields"
+                :title="$tc('laenen-product-select-settings.page.cardTitle')"
+                :is-loading="isLoading"
+            >
+                <laenen-field-configurator
+                    :value="fieldConfigJson"
+                    @update:value="onFieldConfigChange"
+                />
+            </sw-card>
+        </sw-card-view>
+    </template>
+    {% endblock %}
+
+</sw-page>
+{% endblock %}

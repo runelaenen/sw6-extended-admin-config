@@ -1,0 +1,1 @@
+Shopware.Component.override('sw-order-product-select', () => import('./component/sw-order-product-select'));

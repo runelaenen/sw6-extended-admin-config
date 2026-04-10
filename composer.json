@@ -1,0 +1,22 @@
+{
+    "name": "runelaenen/sw6-extended-product-select",
+    "description": "Configurable product select label for the Shopware 6 order form",
+    "type": "shopware-platform-plugin",
+    "version": "1.0.0",
+    "license": "MIT",
+    "require": {
+        "shopware/core": "~6.6.0"
+    },
+    "extra": {
+        "shopware-plugin-class": "Laenen\\ExtendedProductSelect\\LaenenExtendedProductSelect",
+        "label": {
+            "de-DE": "Extended Product Select Plugin",
+            "en-GB": "Extended Product Select Plugin"
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Laenen\\ExtendedProductSelect\\": "src/"
+        }
+    }
+}

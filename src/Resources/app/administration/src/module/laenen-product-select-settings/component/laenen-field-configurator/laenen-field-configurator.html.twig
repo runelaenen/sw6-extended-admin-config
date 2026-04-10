@@ -1,0 +1,56 @@
+{% block laenen_field_configurator %}
+<div class="laenen-field-configurator">
+
+    <div
+        v-for="(field, index) in fieldList"
+        :key="index"
+        class="laenen-field-configurator__row"
+    >
+        <sw-container
+            columns="1fr 120px 120px"
+            gap="0 16px"
+            align="center"
+        >
+            <sw-text-field
+                :value="field.path"
+                label="Field path"
+                placeholder="e.g. manufacturer.translated.name"
+                @update:value="onPathChange(index, $event)"
+            />
+
+            <sw-select-field
+                :value="field.format || ''"
+                :options="formatOptions"
+                label="Format"
+                @update:value="onFormatChange(index, $event)"
+            />
+
+            <div class="laenen-field-configurator__controls">
+                <sw-button
+                    size="x-small"
+                    :disabled="index === 0"
+                    @click="moveUp(index)"
+                >↑</sw-button>
+                <sw-button
+                    size="x-small"
+                    :disabled="index >= fieldList.length - 1"
+                    @click="moveDown(index)"
+                >↓</sw-button>
+                <sw-button
+                    size="x-small"
+                    variant="danger"
+                    @click="removeField(index)"
+                >✕</sw-button>
+            </div>
+        </sw-container>
+    </div>
+
+    <sw-button
+        size="small"
+        variant="ghost"
+        class="laenen-field-configurator__add"
+        @click="addField"
+    >+ Add field</sw-button>
+
+</div>
+{% endblock %}

@@ -1,0 +1,8 @@
+{% block sw_order_product_select_results_list_result_label %}
+<sw-product-variant-info
+    :variations="item.variation"
+    :title-term="getProductLabel(item)"
+>
+    {{ getProductLabel(item) }}
+</sw-product-variant-info>
+{% endblock %}
