@@ -1,19 +1,22 @@
-import { buildAssociationPath } from '../../utils/build-association-path.js';
+import template from './sw-order-list.html.twig';
+import { buildAssociationPath } from '../../../../utils/build-association-path.js';
 
 const ORDER_COLUMNS_KEY = 'LaenenExtendedAdminConfig.config.orderListColumns';
+const ORDER_FILTERS_KEY = 'LaenenExtendedAdminConfig.config.orderListFilters';
 
-// On the order entity, billingAddress nested associations should be loaded
-// through the addresses collection rather than the billingAddress association.
 const ORDER_ASSOCIATION_MAP = {
     billingAddress: 'addresses',
 };
 
-Shopware.Component.override('sw-order-list', {
+export default {
+    template,
+
     inject: ['systemConfigApiService'],
 
     data() {
         return {
             extraOrderColumns: [],
+            extraOrderFilters: [],
         };
     },
 
@@ -36,12 +39,29 @@ Shopware.Component.override('sw-order-list', {
 
             return criteria;
         },
+
+        listFilterOptions() {
+            const options = this.$super('listFilterOptions');
+
+            this.extraOrderFilters
+                .filter(f => f.active && f.property)
+                .forEach(f => {
+                    const key = `laenen-filter-${f.property.replace(/[^a-z0-9]/gi, '-')}`;
+                    options[key] = {
+                        property: f.property,
+                        label: f.label || f.property,
+                        // type: 'string-filter',
+                    };
+                });
+
+            return options;
+        },
     },
 
     methods: {
         async createdComponent() {
-            this.$super('createdComponent');
             await this.loadOrderColumnConfig();
+            this.$super('createdComponent');
         },
 
         async loadOrderColumnConfig() {
@@ -49,11 +69,28 @@ Shopware.Component.override('sw-order-list', {
                 const config = await this.systemConfigApiService.getValues(
                     'LaenenExtendedAdminConfig.config',
                 );
-                const raw = config[ORDER_COLUMNS_KEY];
-                if (raw) {
-                    const parsed = JSON.parse(raw);
+
+                const rawColumns = config[ORDER_COLUMNS_KEY];
+                if (rawColumns) {
+                    const parsed = JSON.parse(rawColumns);
                     if (Array.isArray(parsed)) {
                         this.extraOrderColumns = parsed;
+                    }
+                }
+
+                const rawFilters = config[ORDER_FILTERS_KEY];
+                if (rawFilters) {
+                    const parsed = JSON.parse(rawFilters);
+                    if (Array.isArray(parsed)) {
+                        this.extraOrderFilters = parsed;
+
+                        const extraFilterKeys = parsed
+                            .filter(f => f.active && f.property)
+                            .map(f => `laenen-filter-${f.property.replace(/[^a-z0-9]/gi, '-')}`);
+
+                        if (extraFilterKeys.length > 0) {
+                            this.defaultFilters = [...this.defaultFilters, ...extraFilterKeys];
+                        }
                     }
                 }
             } catch (e) {
@@ -97,4 +134,4 @@ Shopware.Component.override('sw-order-list', {
             return columns;
         },
     },
-});
+};

@@ -1,0 +1,8 @@
+@import "~scss/variables";
+
+.laenen-extended-admin-config-settings {
+  &__tabs {
+    max-width: $content-width;
+    margin: 0 auto 40px;
+  }
+}

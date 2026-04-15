@@ -1,0 +1,8 @@
+{% block sw_order_list_grid_columns %}
+    {{ parent() }}
+    {% block laenen_order_list_column_tags %}
+        <template #column-tags="{ item }">
+            {{ (item.tags || []).map(t => t.name).join(', ') }}
+        </template>
+    {% endblock %}
+{% endblock %}

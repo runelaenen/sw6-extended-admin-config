@@ -1,17 +1,30 @@
 import { buildAssociationPath } from '../../utils/build-association-path.js';
 
 const CUSTOMER_COLUMNS_KEY = 'LaenenExtendedAdminConfig.config.customerListColumns';
+const CUSTOMER_FILTERS_KEY = 'LaenenExtendedAdminConfig.config.customerListFilters';
 
 Shopware.Component.override('sw-customer-list', {
-    inject: ['systemConfigApiService'],
+    inject: ['systemConfigApiService', 'repositoryFactory'],
 
     data() {
         return {
             extraCustomerColumns: [],
+            extraCustomerFilters: [],
+            addressDataMap: {},
         };
     },
 
+    watch: {
+        customers() {
+            this.enrichCustomersWithAddressData();
+        },
+    },
+
     computed: {
+        customerAddressRepository() {
+            return this.repositoryFactory.create('customer_address');
+        },
+
         defaultCriteria() {
             const criteria = this.$super('defaultCriteria');
 
@@ -26,12 +39,29 @@ Shopware.Component.override('sw-customer-list', {
 
             return criteria;
         },
+
+        listFilterOptions() {
+            const options = this.$super('listFilterOptions');
+
+            this.extraCustomerFilters
+                .filter(f => f.active && f.property)
+                .forEach(f => {
+                    const key = `laenen-filter-${f.property.replace(/[^a-z0-9]/gi, '-')}`;
+                    options[key] = {
+                        property: f.property,
+                        label: f.label || f.property,
+                        type: 'string-filter',
+                    };
+                });
+
+            return options;
+        },
     },
 
     methods: {
         async createdComponent() {
-            this.$super('createdComponent');
             await this.loadCustomerColumnConfig();
+            this.$super('createdComponent');
         },
 
         async loadCustomerColumnConfig() {
@@ -39,11 +69,28 @@ Shopware.Component.override('sw-customer-list', {
                 const config = await this.systemConfigApiService.getValues(
                     'LaenenExtendedAdminConfig.config',
                 );
-                const raw = config[CUSTOMER_COLUMNS_KEY];
-                if (raw) {
-                    const parsed = JSON.parse(raw);
+
+                const rawColumns = config[CUSTOMER_COLUMNS_KEY];
+                if (rawColumns) {
+                    const parsed = JSON.parse(rawColumns);
                     if (Array.isArray(parsed)) {
                         this.extraCustomerColumns = parsed;
+                    }
+                }
+
+                const rawFilters = config[CUSTOMER_FILTERS_KEY];
+                if (rawFilters) {
+                    const parsed = JSON.parse(rawFilters);
+                    if (Array.isArray(parsed)) {
+                        this.extraCustomerFilters = parsed;
+
+                        const extraFilterKeys = parsed
+                            .filter(f => f.active && f.property)
+                            .map(f => `laenen-filter-${f.property.replace(/[^a-z0-9]/gi, '-')}`);
+
+                        if (extraFilterKeys.length > 0) {
+                            this.defaultFilters = [...this.defaultFilters, ...extraFilterKeys];
+                        }
                     }
                 }
             } catch (e) {
@@ -85,6 +132,62 @@ Shopware.Component.override('sw-customer-list', {
             toAppend.forEach(col => columns.push(col));
 
             return columns;
+        },
+
+        async enrichCustomersWithAddressData() {
+            if (!this.customers || this.customers.length === 0) return;
+
+            // Determine which sub-associations of customer_address are needed
+            const addressAssociations = new Set();
+            this.extraCustomerColumns
+                .filter(c => c.active && c.path)
+                .forEach(c => {
+                    const parts = c.path.split('.');
+                    if (parts.length >= 2 &&
+                        (parts[0] === 'defaultShippingAddress' || parts[0] === 'defaultBillingAddress')) {
+                        const subAssocPath = buildAssociationPath('customer_address', parts.slice(1));
+                        if (subAssocPath.length > 0) {
+                            addressAssociations.add(subAssocPath.join('.'));
+                        }
+                    }
+                });
+
+            if (addressAssociations.size === 0) return;
+
+            // Collect uncached address IDs that need fetching
+            const uncachedIds = [];
+            this.customers.forEach(customer => {
+                if (customer.defaultShippingAddressId && !this.addressDataMap[customer.defaultShippingAddressId]) {
+                    uncachedIds.push(customer.defaultShippingAddressId);
+                }
+                if (customer.defaultBillingAddressId && !this.addressDataMap[customer.defaultBillingAddressId]) {
+                    uncachedIds.push(customer.defaultBillingAddressId);
+                }
+            });
+
+            const uniqueUncachedIds = [...new Set(uncachedIds)];
+            if (uniqueUncachedIds.length > 0) {
+                try {
+                    const criteria = new Shopware.Data.Criteria();
+                    criteria.setIds(uniqueUncachedIds);
+                    addressAssociations.forEach(assoc => criteria.addAssociation(assoc));
+
+                    const addresses = await this.customerAddressRepository.search(criteria, Shopware.Context.api);
+                    addresses.forEach(addr => {
+                        this.addressDataMap[addr.id] = addr;
+                    });
+                } catch (e) {
+                    console.warn('[LaenenExtendedAdminConfig] Could not enrich customer address data:', e);
+                }
+            }
+
+            // Always inject from cache into the current customer entities
+            this.customers.forEach(customer => {
+                const shipping = this.addressDataMap[customer.defaultShippingAddressId];
+                const billing = this.addressDataMap[customer.defaultBillingAddressId];
+                if (shipping) customer.defaultShippingAddress = shipping;
+                if (billing) customer.defaultBillingAddress = billing;
+            });
         },
     },
 });

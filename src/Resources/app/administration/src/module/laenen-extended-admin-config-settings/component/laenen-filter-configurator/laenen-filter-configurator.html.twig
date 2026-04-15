@@ -1,44 +1,37 @@
-{% block laenen_column_configurator %}
-<div class="laenen-column-configurator">
+{% block laenen_filter_configurator %}
+<div class="laenen-filter-configurator">
 
     <div
-        v-for="(column, index) in columnList"
+        v-for="(filter, index) in filterList"
         :key="index"
-        class="laenen-column-configurator__row"
+        class="laenen-filter-configurator__row"
     >
         <sw-container
-            columns="2fr 1fr 1fr 80px 120px"
+            columns="2fr 1fr 80px 120px"
             gap="0 16px"
             align="center"
         >
             <sw-text-field
-                :value="column.path"
+                :value="filter.property"
                 label="Field path"
                 placeholder="e.g. orderCustomer.email"
-                @update:value="onPathChange(index, $event)"
+                @update:value="onPropertyChange(index, $event)"
             />
 
             <sw-text-field
-                :value="column.label"
-                label="Column label"
+                :value="filter.label"
+                label="Filter label"
                 placeholder="e.g. Customer e-mail"
                 @update:value="onLabelChange(index, $event)"
             />
 
-            <sw-text-field
-                :value="column.afterColumn || ''"
-                label="After column"
-                placeholder="e.g. orderNumber"
-                @update:value="onAfterColumnChange(index, $event)"
-            />
-
             <sw-checkbox-field
-                :value="column.active"
+                :value="filter.active"
                 label="Active"
                 @update:value="onActiveChange(index, $event)"
             />
 
-            <div class="laenen-column-configurator__controls">
+            <div class="laenen-filter-configurator__controls">
                 <sw-button
                     size="x-small"
                     :disabled="index === 0"
@@ -46,13 +39,13 @@
                 >↑</sw-button>
                 <sw-button
                     size="x-small"
-                    :disabled="index >= columnList.length - 1"
+                    :disabled="index >= filterList.length - 1"
                     @click="moveDown(index)"
                 >↓</sw-button>
                 <sw-button
                     size="x-small"
                     variant="danger"
-                    @click="removeColumn(index)"
+                    @click="removeFilter(index)"
                 >✕</sw-button>
             </div>
         </sw-container>
@@ -61,9 +54,9 @@
     <sw-button
         size="small"
         variant="ghost"
-        class="laenen-column-configurator__add"
-        @click="addColumn"
-    >+ Add column</sw-button>
+        class="laenen-filter-configurator__add"
+        @click="addFilter"
+    >+ Add filter</sw-button>
 
 </div>
 {% endblock %}

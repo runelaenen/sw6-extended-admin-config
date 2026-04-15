@@ -7,8 +7,14 @@
         },
         "page": {
             "cardTitleProductLabel": "Produktetikett-Felder",
+            "cardTitleNewOrderLineItemColumns": "Neue Bestellung: Positionen-Spalten",
             "cardTitleOrderColumns": "Bestelllisten-Spalten",
+            "cardTitleOrderListFilters": "Bestelllisten-Filter",
             "cardTitleCustomerColumns": "Kundenlisten-Spalten",
+            "cardTitleCustomerListFilters": "Kundenlisten-Filter",
+            "tabOrderList": "Bestellliste",
+            "tabOrderCreation": "Neue Bestellung",
+            "tabCustomerList": "Kundenliste",
             "buttonSave": "Speichern"
         }
     }

@@ -10,10 +10,11 @@ Configurable admin enhancements for Shopware 6. Control which product fields app
   ```
   Acme Widget Pro | Acme Corp | 42 | €29.99
   ```
+- **New order line item columns**: add extra columns to the product grid when creating a new order — manufacturer name, stock, or any other product field, loaded automatically.
 - **Order list columns**: add any order entity field as an extra column to the Orders listing, with control over placement and visibility.
 - **Customer list columns**: add any customer entity field as an extra column to the Customers listing, with control over placement and visibility.
 
-All three are configured from **Settings > Plugins > Extended Admin Config**.
+All four are configured from **Settings > Plugins > Extended Admin Config**.
 
 ---
 
@@ -82,6 +83,44 @@ Fields are joined with ` | ` in the label. Fields whose path resolves to an empt
 
 ---
 
+### New Order: Line Item Grid Columns
+
+Adds extra columns to the product grid when creating a new order (**Orders > Add Order**).
+
+| Field | Description |
+|-------|-------------|
+| **Field path** | Dot-notation path into the line item, prefixed with `payload.` for product data, e.g. `payload.manufacturer.translated.name` |
+| **Column label** | Text shown in the column header |
+| **After column** | Property name of an existing column to insert after: `quantity`, `label`, `unitPrice`, `tax`, `totalPrice`. Leave empty to append at the end |
+| **Active** | Uncheck to hide a column without deleting it |
+| **↑ / ↓** | Change the order of appended columns |
+| **✕** | Remove a column |
+
+**Manufacturer name and stock example:**
+
+| Path | Label |
+|------|-------|
+| `payload.manufacturer.translated.name` | Manufacturer |
+| `payload.stock` | Stock |
+
+**Common paths:**
+
+| Path | Description |
+|------|-------------|
+| `payload.stock` | Available stock quantity — already present in the line item, no extra loading needed |
+| `payload.productNumber` | Product number / SKU — already present in the line item |
+| `payload.manufacturer.translated.name` | Manufacturer name — loaded automatically when this column is active |
+| `payload.cover.media.url` | Product cover image URL — loaded automatically when this column is active |
+| `label` | Product name (top-level line item field, always present) |
+
+**How extra data is loaded**
+
+Fields under `payload.*` that are product associations (such as `manufacturer` or `cover`) are not present in the cart line item by default. The plugin detects which associations are needed from the configured column paths and loads the missing product data in a single batched request whenever the cart is loaded or updated. The results are cached for the lifetime of the page so subsequent cart changes (quantity edits, adding more products) do not trigger redundant API calls.
+
+Fields that are already included in the cart payload by Shopware (`stock`, `productNumber`, `manufacturerId`, etc.) are shown directly without any additional loading.
+
+---
+
 ### Order List Columns
 
 Adds extra columns to the Orders listing page.
@@ -141,6 +180,8 @@ All field paths use dot-notation to traverse the entity graph. Array indices are
 The plugin reads Shopware's entity schema at runtime to determine which segments of a configured path are associations. Only association segments are added to the API query — scalar and JSON fields are excluded. Multi-level paths are fully supported: `billingAddress.countryState.name` causes both `billingAddress` and `countryState` to be loaded.
 
 On the order entity, paths starting with `billingAddress` load their nested associations through the `addresses` collection, which is how Shopware's order data model is structured.
+
+For the new order line item grid, associations missing from the cart payload (e.g. `manufacturer`) are loaded via a batched product repository request whenever the cart changes. The data is merged directly into each line item's payload so that standard dot-notation paths resolve without any template customisation.
 
 ### Column positioning
 

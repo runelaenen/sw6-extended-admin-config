@@ -7,8 +7,14 @@
         },
         "page": {
             "cardTitleProductLabel": "Product Label Fields",
+            "cardTitleNewOrderLineItemColumns": "New Order: Line Item Grid Columns",
             "cardTitleOrderColumns": "Order List Columns",
+            "cardTitleOrderListFilters": "Order List Filters",
             "cardTitleCustomerColumns": "Customer List Columns",
+            "cardTitleCustomerListFilters": "Customer List Filters",
+            "tabOrderList": "Order List",
+            "tabOrderCreation": "Order Creation",
+            "tabCustomerList": "Customer List",
             "buttonSave": "Save"
         }
     }

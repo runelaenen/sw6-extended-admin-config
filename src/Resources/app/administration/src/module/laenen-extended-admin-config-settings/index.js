@@ -1,6 +1,7 @@
 Shopware.Component.register('laenen-extended-admin-config-settings', () => import('./page/laenen-extended-admin-config-settings'));
 Shopware.Component.register('laenen-field-configurator', () => import('./component/laenen-field-configurator'));
 Shopware.Component.register('laenen-column-configurator', () => import('./component/laenen-column-configurator'));
+Shopware.Component.register('laenen-filter-configurator', () => import('./component/laenen-filter-configurator'));
 
 Shopware.Module.register('laenen-extended-admin-config-settings', {
     type: 'plugin',
