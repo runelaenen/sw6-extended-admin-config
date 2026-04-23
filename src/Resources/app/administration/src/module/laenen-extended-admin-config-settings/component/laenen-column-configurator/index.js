@@ -16,6 +16,16 @@ export default {
         };
     },
 
+    computed: {
+        formatOptions() {
+            return [
+                { id: '', name: 'Raw value' },
+                { id: 'currency', name: 'Currency' },
+                { id: 'date', name: 'Date' },
+            ];
+        },
+    },
+
     watch: {
         value(newValue) {
             this.columnList = this.parseValue(newValue);
@@ -43,7 +53,7 @@ export default {
         },
 
         addColumn() {
-            this.columnList.push({ path: '', label: '', active: true, afterColumn: '' });
+            this.columnList.push({ path: '', label: '', format: null, active: true, afterColumn: '' });
             this.emitChange();
         },
 
@@ -73,6 +83,11 @@ export default {
 
         onLabelChange(index, value) {
             this.columnList[index].label = value;
+            this.emitChange();
+        },
+
+        onFormatChange(index, value) {
+            this.columnList[index].format = value || null;
             this.emitChange();
         },
 

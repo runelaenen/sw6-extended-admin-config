@@ -7,7 +7,7 @@
         class="laenen-column-configurator__row"
     >
         <sw-container
-            columns="2fr 1fr 1fr 80px 120px"
+            columns="2fr 1fr 1fr 1fr 80px 120px"
             gap="0 16px"
             align="center"
         >
@@ -23,6 +23,13 @@
                 label="Column label"
                 placeholder="e.g. Customer e-mail"
                 @update:value="onLabelChange(index, $event)"
+            />
+
+            <sw-select-field
+                :value="column.format || ''"
+                :options="formatOptions"
+                label="Format"
+                @update:value="onFormatChange(index, $event)"
             />
 
             <sw-text-field

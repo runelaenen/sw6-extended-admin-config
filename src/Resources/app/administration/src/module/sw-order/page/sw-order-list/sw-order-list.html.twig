@@ -1,8 +1,19 @@
 {% block sw_order_list_grid_columns %}
-    {{ parent() }}
-    {% block laenen_order_list_column_tags %}
-        <template #column-tags="{ item }">
-            {{ (item.tags || []).map(t => t.name).join(', ') }}
-        </template>
-    {% endblock %}
+    {% parent %}
+
+    <template v-for="col in formattedExtraOrderColumns" :key="col.path" v-slot:[col.slotName]="{ item }">
+        {{ applyOrderFormat(item, col) }}
+    </template>
+
+    <template #column-tags="{ item }">
+        <span
+                v-if="item.tags && item.tags.length"
+                v-tooltip="{
+                showDelay: 300,
+                width: 300,
+                message: tagTooltipMessage(item)
+            }"
+        >{{ tagSummaryLabel(item) }}</span>
+        <span v-else>—</span>
+    </template>
 {% endblock %}

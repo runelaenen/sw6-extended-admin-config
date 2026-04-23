@@ -56,6 +56,23 @@ export default {
 
             return options;
         },
+
+        formattedExtraOrderColumns() {
+            return this.extraOrderColumns
+                .filter(col => col.active && col.path && col.format)
+                .map(col => ({
+                    ...col,
+                    slotName: `column-${col.path}`,
+                }));
+        },
+
+        currencyFilter() {
+            return Shopware.Filter.getByName('currency');
+        },
+
+        dateFilter() {
+            return Shopware.Filter.getByName('date');
+        },
     },
 
     methods: {
@@ -132,6 +149,42 @@ export default {
             toAppend.forEach(col => columns.push(col));
 
             return columns;
+        },
+
+        resolveOrderFieldPath(item, path) {
+            if (!path) return null;
+            return path.split('.').reduce((obj, key) => {
+                if (obj === null || obj === undefined) return null;
+                const val = obj[key];
+                return val !== undefined ? val : null;
+            }, item);
+        },
+
+        applyOrderFormat(item, col) {
+            const value = this.resolveOrderFieldPath(item, col.path);
+            if (value === null || value === undefined) return '';
+
+            if (col.format === 'currency') {
+                const isoCode = Shopware.Context.app.systemCurrencyISOCode;
+                return this.currencyFilter(value, isoCode);
+            }
+
+            if (col.format === 'date') {
+                return this.dateFilter(value);
+            }
+
+            return String(value);
+        },
+
+        tagTooltipMessage(item) {
+            if (!item.tags || item.tags.length === 0) return '';
+            return item.tags.map(t => t.name).join(', ');
+        },
+
+        tagSummaryLabel(item) {
+            if (!item.tags || item.tags.length === 0) return '—';
+            if (item.tags.length === 1) return item.tags[0].name;
+            return `${item.tags.length} tags`;
         },
     },
 };

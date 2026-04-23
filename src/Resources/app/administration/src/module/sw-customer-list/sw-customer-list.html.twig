@@ -1,0 +1,7 @@
+{% block sw_customer_list_grid_columns %}
+    {% parent %}
+
+    <template v-for="col in formattedExtraCustomerColumns" :key="col.path" v-slot:[col.slotName]="{ item }">
+        {{ applyCustomerFormat(item, col) }}
+    </template>
+{% endblock %}

@@ -46,6 +46,7 @@ export default {
                         allowResize: true,
                         visible: true,
                         sortable: false,
+                        width: '150px',
                     };
 
                     if (column.afterColumn) {
@@ -90,18 +91,21 @@ export default {
             );
             if (productItems.length === 0) return;
 
-            // Determine which top-level payload keys need association loading
-            const keysToEnrich = new Set();
+            // Collect all payload keys from configured columns, split into association vs direct fields
+            const allPayloadKeys = new Set();
+            const associationKeys = new Set();
+
             this.extraLineItemColumns
                 .filter(col => col.active && col.path?.startsWith('payload.'))
                 .forEach(col => {
                     const firstKey = col.path.slice('payload.'.length).split('.')[0];
+                    allPayloadKeys.add(firstKey);
                     if (buildAssociationPath('product', [firstKey]).length > 0) {
-                        keysToEnrich.add(firstKey);
+                        associationKeys.add(firstKey);
                     }
                 });
 
-            if (keysToEnrich.size === 0) return;
+            if (allPayloadKeys.size === 0) return;
 
             // Fetch products not yet in the local cache
             const idsToFetch = [...new Set(
@@ -114,7 +118,7 @@ export default {
                 const { Criteria } = Shopware.Data;
                 const criteria = new Criteria(1, idsToFetch.length);
                 criteria.setIds(idsToFetch);
-                keysToEnrich.forEach(key => criteria.addAssociation(key));
+                associationKeys.forEach(key => criteria.addAssociation(key));
 
                 try {
                     const result = await this.productRepository.search(criteria, Shopware.Context.api);
@@ -127,13 +131,13 @@ export default {
                 }
             }
 
-            // Merge extra data into each item's payload (also applies cache hits)
+            // Merge all configured payload keys (both associations and direct fields) into item.payload
             productItems.forEach(item => {
                 const product = this.productDataMap[item.referencedId];
                 if (!product) return;
 
                 if (!item.payload) item.payload = {};
-                keysToEnrich.forEach(key => {
+                allPayloadKeys.forEach(key => {
                     if (product[key] != null) {
                         item.payload[key] = product[key];
                     }

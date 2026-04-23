@@ -1,9 +1,12 @@
+import template from './sw-customer-list.html.twig';
 import { buildAssociationPath } from '../../utils/build-association-path.js';
 
 const CUSTOMER_COLUMNS_KEY = 'LaenenExtendedAdminConfig.config.customerListColumns';
 const CUSTOMER_FILTERS_KEY = 'LaenenExtendedAdminConfig.config.customerListFilters';
 
 Shopware.Component.override('sw-customer-list', {
+    template,
+
     inject: ['systemConfigApiService', 'repositoryFactory'],
 
     data() {
@@ -55,6 +58,23 @@ Shopware.Component.override('sw-customer-list', {
                 });
 
             return options;
+        },
+
+        formattedExtraCustomerColumns() {
+            return this.extraCustomerColumns
+                .filter(col => col.active && col.path && col.format)
+                .map(col => ({
+                    ...col,
+                    slotName: `column-${col.path}`,
+                }));
+        },
+
+        currencyFilter() {
+            return Shopware.Filter.getByName('currency');
+        },
+
+        dateFilter() {
+            return Shopware.Filter.getByName('date');
         },
     },
 
@@ -132,6 +152,31 @@ Shopware.Component.override('sw-customer-list', {
             toAppend.forEach(col => columns.push(col));
 
             return columns;
+        },
+
+        resolveCustomerFieldPath(item, path) {
+            if (!path) return null;
+            return path.split('.').reduce((obj, key) => {
+                if (obj === null || obj === undefined) return null;
+                const val = obj[key];
+                return val !== undefined ? val : null;
+            }, item);
+        },
+
+        applyCustomerFormat(item, col) {
+            const value = this.resolveCustomerFieldPath(item, col.path);
+            if (value === null || value === undefined) return '';
+
+            if (col.format === 'currency') {
+                const isoCode = Shopware.Context.app.systemCurrencyISOCode;
+                return this.currencyFilter(value, isoCode);
+            }
+
+            if (col.format === 'date') {
+                return this.dateFilter(value);
+            }
+
+            return String(value);
         },
 
         async enrichCustomersWithAddressData() {
