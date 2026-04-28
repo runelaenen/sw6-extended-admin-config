@@ -27,7 +27,8 @@ export default {
             this.extraOrderColumns
                 .filter(column => column.active && column.path)
                 .forEach(column => {
-                    let assocPath = buildAssociationPath('order', column.path.split('.'));
+                    const segments = column.path.split('.').map(s => s.replace(/\[\d+\]$/, ''));
+                    let assocPath = buildAssociationPath('order', segments);
                     if (assocPath.length === 0) return;
 
                     if (ORDER_ASSOCIATION_MAP[assocPath[0]]) {
