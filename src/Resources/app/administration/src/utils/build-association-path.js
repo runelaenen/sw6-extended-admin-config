@@ -20,6 +20,11 @@ export function buildAssociationPath(startEntityName, segments) {
         const definition = Shopware.EntityDefinition.get(entityName);
         if (!definition) break;
 
+        // Skip "extensions" as it is not a real association field
+        if (segment === 'extensions') {
+            continue;
+        }
+
         const assocFields = definition.getAssociationFields();
         if (!Object.prototype.hasOwnProperty.call(assocFields, segment)) break;
 
