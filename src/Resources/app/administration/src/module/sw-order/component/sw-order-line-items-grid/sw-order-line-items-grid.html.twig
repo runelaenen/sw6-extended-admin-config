@@ -1,0 +1,14 @@
+{% block sw_order_line_items_grid_column_payload_options_link %}
+    <router-link
+            v-if="item.payload && item.payload.options"
+            class="sw-order-line-items-grid__item-payload-options"
+            :title="$tc('sw-order.detailBase.contextMenuShowProduct')"
+            :to="{ name: 'sw.product.detail', params: { id: item.productId } }"
+    >
+        <div
+                v-tooltip="getLineItemProductTooltip(item) ? { showDelay: 300, message: getLineItemProductTooltip(item) } : false"
+                class="sw-order-line-items-grid__item-label">
+            {{ item.label }}
+        </div>
+    </router-link>
+{% endblock %}
