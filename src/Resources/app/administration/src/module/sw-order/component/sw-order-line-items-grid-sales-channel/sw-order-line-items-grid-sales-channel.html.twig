@@ -36,6 +36,7 @@
 
                     {% block sw_order_line_items_grid_sales_channel_grid_columns_label_link %}
                         <div
+                                class="hello-rune-here"
                                 v-else-if="!isInlineEdit && isProductItem(item)"
                                 v-tooltip="getLineItemProductTooltip(item) ? { showDelay: 300, message: getLineItemProductTooltip(item) } : false" {# Added tooltip #}
                         >
@@ -48,11 +49,9 @@
                                         :title="$tc('sw-order.detailBase.contextMenuShowProduct')"
                                         :to="{ name: 'sw.product.detail', params: { id: item.identifier || item.id } }"
                                 >
-                                    <sw-product-variant-info :variations="item.payload.options">
-                                        <div class="sw-order-line-items-grid__item-label">
-                                            {{ item.label }}
-                                        </div>
-                                    </sw-product-variant-info>
+                                    <div class="sw-order-line-items-grid__item-label">
+                                        {{ item.label }}
+                                    </div>
                                 </router-link>
 
                                 <div
