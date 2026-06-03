@@ -47,11 +47,16 @@ export default {
             this.extraOrderFilters
                 .filter(f => f.active && f.property)
                 .forEach(f => {
-                    const key = `laenen-filter-${f.property.replace(/[^a-z0-9]/gi, '-')}`;
+                    const property = f.property
+                        .split('.')
+                        .map(s => s.replace(/\[\d+\]$/, ''))
+                        .join('.');
+
+                    const key = `laenen-filter-${property.replace(/[^a-z0-9]/gi, '-')}`;
+
                     options[key] = {
-                        property: f.property,
-                        label: f.label || f.property,
-                        // type: 'string-filter',
+                        property,
+                        label: f.label || property,
                     };
                 });
 
@@ -102,13 +107,18 @@ export default {
                     if (Array.isArray(parsed)) {
                         this.extraOrderFilters = parsed;
 
-                        const extraFilterKeys = parsed
+                        this.extraOrderFilters
                             .filter(f => f.active && f.property)
-                            .map(f => `laenen-filter-${f.property.replace(/[^a-z0-9]/gi, '-')}`);
+                            .forEach(f => {
+                                const property = f.property
+                                    .split('.')
+                                    .map(s => s.replace(/\[\d+\]$/, ''))
+                                    .join('.');
 
-                        if (extraFilterKeys.length > 0) {
-                            this.defaultFilters = [...this.defaultFilters, ...extraFilterKeys];
-                        }
+                                const key = `laenen-filter-${property.replace(/[^a-z0-9]/gi, '-')}`;
+
+                                this.defaultFilters.push(key);
+                            });
                     }
                 }
             } catch (e) {

@@ -46,14 +46,19 @@ Shopware.Component.override('sw-customer-list', {
         listFilterOptions() {
             const options = this.$super('listFilterOptions');
 
-            this.extraCustomerFilters
+            this.extraOrderFilters
                 .filter(f => f.active && f.property)
                 .forEach(f => {
-                    const key = `laenen-filter-${f.property.replace(/[^a-z0-9]/gi, '-')}`;
+                    const property = f.property
+                        .split('.')
+                        .map(s => s.replace(/\[\d+\]$/, ''))
+                        .join('.');
+
+                    const key = `laenen-filter-${property.replace(/[^a-z0-9]/gi, '-')}`;
+
                     options[key] = {
-                        property: f.property,
-                        label: f.label || f.property,
-                        type: 'string-filter',
+                        property,
+                        label: f.label || property,
                     };
                 });
 
@@ -103,14 +108,18 @@ Shopware.Component.override('sw-customer-list', {
                     const parsed = JSON.parse(rawFilters);
                     if (Array.isArray(parsed)) {
                         this.extraCustomerFilters = parsed;
-
-                        const extraFilterKeys = parsed
+                        this.extraCustomerFilters
                             .filter(f => f.active && f.property)
-                            .map(f => `laenen-filter-${f.property.replace(/[^a-z0-9]/gi, '-')}`);
+                            .forEach(f => {
+                                const property = f.property
+                                    .split('.')
+                                    .map(s => s.replace(/\[\d+\]$/, ''))
+                                    .join('.');
 
-                        if (extraFilterKeys.length > 0) {
-                            this.defaultFilters = [...this.defaultFilters, ...extraFilterKeys];
-                        }
+                                const key = `laenen-filter-${property.replace(/[^a-z0-9]/gi, '-')}`;
+
+                                this.defaultFilters.push(key);
+                            });
                     }
                 }
             } catch (e) {
