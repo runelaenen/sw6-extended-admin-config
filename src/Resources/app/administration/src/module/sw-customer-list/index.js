@@ -46,7 +46,7 @@ Shopware.Component.override('sw-customer-list', {
         listFilterOptions() {
             const options = this.$super('listFilterOptions');
 
-            this.extraOrderFilters
+            this.extraCustomerFilters
                 .filter(f => f.active && f.property)
                 .forEach(f => {
                     const property = f.property
