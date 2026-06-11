@@ -8,7 +8,7 @@
                         {{ $tc('sw-settings.index.title') }}
                         <sw-icon
                                 name="regular-chevron-right-xs"
-                                small
+                                size="16"
                         />
                         {{ $tc('laenen-extended-admin-config-settings.general.title') }}
                     </h2>
@@ -34,7 +34,7 @@
 
         {% block laenen_extended_admin_config_settings_content %}
             <template #content>
-                <sw-card-view>
+                <mt-card-view>
                     <div class="laenen-extended-admin-config-settings__tabs">
                         <mt-tabs
                                 :default-item="currentTab"
@@ -45,7 +45,7 @@
 
                     <div v-show="currentTab === 'order-list'">
                         {% block laenen_extended_admin_config_settings_card_order_columns %}
-                            <sw-card
+                            <mt-card
                                     position-identifier="laenen-extended-admin-config-settings-order-columns"
                                     :title="$tc('laenen-extended-admin-config-settings.page.cardTitleOrderColumns')"
                                     :is-loading="isLoading"
@@ -54,11 +54,11 @@
                                         :value="orderColumnConfigJson"
                                         @update:value="onOrderColumnConfigChange"
                                 />
-                            </sw-card>
+                            </mt-card>
                         {% endblock %}
 
                         {% block laenen_extended_admin_config_settings_card_order_filters %}
-                            <sw-card
+                            <mt-card
                                     position-identifier="laenen-extended-admin-config-settings-order-filters"
                                     :title="$tc('laenen-extended-admin-config-settings.page.cardTitleOrderListFilters')"
                                     :is-loading="isLoading"
@@ -67,13 +67,13 @@
                                         :value="orderFilterConfigJson"
                                         @update:value="onOrderFilterConfigChange"
                                 />
-                            </sw-card>
+                            </mt-card>
                         {% endblock %}
                     </div>
 
                     <div v-show="currentTab === 'order-creation'">
                         {% block laenen_extended_admin_config_settings_card_product_label %}
-                            <sw-card
+                            <mt-card
                                     position-identifier="laenen-extended-admin-config-settings-fields"
                                     :title="$tc('laenen-extended-admin-config-settings.page.cardTitleProductLabel')"
                                     :is-loading="isLoading"
@@ -82,11 +82,11 @@
                                         :value="fieldConfigJson"
                                         @update:value="onFieldConfigChange"
                                 />
-                            </sw-card>
+                            </mt-card>
                         {% endblock %}
 
                         {% block laenen_extended_admin_config_settings_card_new_order_line_item_columns %}
-                            <sw-card
+                            <mt-card
                                     position-identifier="laenen-extended-admin-config-settings-new-order-line-item-columns"
                                     :title="$tc('laenen-extended-admin-config-settings.page.cardTitleNewOrderLineItemColumns')"
                                     :is-loading="isLoading"
@@ -95,13 +95,13 @@
                                         :value="newOrderLineItemColumnConfigJson"
                                         @update:value="onNewOrderLineItemColumnConfigChange"
                                 />
-                            </sw-card>
+                            </mt-card>
                         {% endblock %}
                     </div>
 
                     <div v-show="currentTab === 'customer-list'">
                         {% block laenen_extended_admin_config_settings_card_customer_columns %}
-                            <sw-card
+                            <mt-card
                                     position-identifier="laenen-extended-admin-config-settings-customer-columns"
                                     :title="$tc('laenen-extended-admin-config-settings.page.cardTitleCustomerColumns')"
                                     :is-loading="isLoading"
@@ -110,11 +110,11 @@
                                         :value="customerColumnConfigJson"
                                         @update:value="onCustomerColumnConfigChange"
                                 />
-                            </sw-card>
+                            </mt-card>
                         {% endblock %}
 
                         {% block laenen_extended_admin_config_settings_card_customer_filters %}
-                            <sw-card
+                            <mt-card
                                     position-identifier="laenen-extended-admin-config-settings-customer-filters"
                                     :title="$tc('laenen-extended-admin-config-settings.page.cardTitleCustomerListFilters')"
                                     :is-loading="isLoading"
@@ -123,11 +123,11 @@
                                         :value="customerFilterConfigJson"
                                         @update:value="onCustomerFilterConfigChange"
                                 />
-                            </sw-card>
+                            </mt-card>
                         {% endblock %}
                     </div>
 
-                </sw-card-view>
+                </mt-card-view>
             </template>
         {% endblock %}
 

@@ -31,8 +31,8 @@ export default {
     computed: {
         formatOptions() {
             return [
-                {id: '', name: 'Raw value'},
-                {id: 'currency', name: 'Currency'},
+                {value: '', label: 'Raw value'},
+                {value: 'currency', label: 'Currency'},
             ];
         },
     },

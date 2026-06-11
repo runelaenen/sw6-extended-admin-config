@@ -19,9 +19,9 @@ export default {
     computed: {
         formatOptions() {
             return [
-                { id: '', name: 'Raw value' },
-                { id: 'currency', name: 'Currency' },
-                { id: 'date', name: 'Date' },
+                { value: '', label: 'Raw value' },
+                { value: 'currency', label: 'Currency' },
+                { value: 'date', label: 'Date' },
             ];
         },
     },

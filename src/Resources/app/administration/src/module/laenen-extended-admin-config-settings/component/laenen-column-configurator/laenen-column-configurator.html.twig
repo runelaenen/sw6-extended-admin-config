@@ -7,70 +7,69 @@
         class="laenen-column-configurator__row"
     >
         <sw-container
-            columns="2fr 1fr 1fr 1fr 80px 120px"
+            columns="2fr 1fr 1fr 1fr 80px 160px"
             gap="0 16px"
             align="center"
         >
-            <sw-text-field
-                :value="column.path"
+            <mt-text-field
+                :model-value="column.path"
                 label="Field path"
                 placeholder="e.g. orderCustomer.email"
-                @update:value="onPathChange(index, $event)"
+                @update:model-value="onPathChange(index, $event)"
             />
 
-            <sw-text-field
-                :value="column.label"
+            <mt-text-field
+                :model-value="column.label"
                 label="Column label"
                 placeholder="e.g. Customer e-mail"
-                @update:value="onLabelChange(index, $event)"
+                @update:model-value="onLabelChange(index, $event)"
             />
 
             <sw-select-field
-                :value="column.format || ''"
+                :model-value="column.format || ''"
                 :options="formatOptions"
                 label="Format"
-                @update:value="onFormatChange(index, $event)"
+                @update:model-value="onFormatChange(index, $event)"
             />
 
-            <sw-text-field
-                :value="column.afterColumn || ''"
+            <mt-text-field
+                :model-value="column.afterColumn || ''"
                 label="After column"
                 placeholder="e.g. orderNumber"
-                @update:value="onAfterColumnChange(index, $event)"
+                @update:model-value="onAfterColumnChange(index, $event)"
             />
 
-            <sw-checkbox-field
-                :value="column.active"
+            <mt-checkbox
+                :checked="column.active"
                 label="Active"
-                @update:value="onActiveChange(index, $event)"
+                @update:checked="onActiveChange(index, $event)"
             />
 
             <div class="laenen-column-configurator__controls">
-                <sw-button
-                    size="x-small"
+                <mt-button
+                    size="small"
                     :disabled="index === 0"
                     @click="moveUp(index)"
-                >↑</sw-button>
-                <sw-button
-                    size="x-small"
+                >↑</mt-button>
+                <mt-button
+                    size="small"
                     :disabled="index >= columnList.length - 1"
                     @click="moveDown(index)"
-                >↓</sw-button>
-                <sw-button
-                    size="x-small"
-                    variant="danger"
+                >↓</mt-button>
+                <mt-button
+                    size="small"
+                    variant="critical"
                     @click="removeColumn(index)"
-                >✕</sw-button>
+                >✕</mt-button>
             </div>
         </sw-container>
     </div>
 
-    <sw-button
+    <mt-button
         size="small"
-        variant="ghost"
         class="laenen-column-configurator__add"
         @click="addColumn"
-    >+ Add column</sw-button>
+    >+ Add column</mt-button>
 
 </div>
 {% endblock %}

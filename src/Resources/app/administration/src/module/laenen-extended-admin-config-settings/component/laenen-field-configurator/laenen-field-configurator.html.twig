@@ -7,50 +7,49 @@
         class="laenen-field-configurator__row"
     >
         <sw-container
-            columns="1fr 120px 120px"
+            columns="1fr 120px 160px"
             gap="0 16px"
             align="center"
         >
-            <sw-text-field
-                :value="field.path"
+            <mt-text-field
+                :model-value="field.path"
                 label="Field path"
                 placeholder="e.g. manufacturer.translated.name"
-                @update:value="onPathChange(index, $event)"
+                @update:model-value="onPathChange(index, $event)"
             />
 
             <sw-select-field
-                :value="field.format || ''"
+                :model-value="field.format || ''"
                 :options="formatOptions"
                 label="Format"
-                @update:value="onFormatChange(index, $event)"
+                @update:model-value="onFormatChange(index, $event)"
             />
 
             <div class="laenen-field-configurator__controls">
-                <sw-button
-                    size="x-small"
+                <mt-button
+                    size="small"
                     :disabled="index === 0"
                     @click="moveUp(index)"
-                >↑</sw-button>
-                <sw-button
-                    size="x-small"
+                >↑</mt-button>
+                <mt-button
+                    size="small"
                     :disabled="index >= fieldList.length - 1"
                     @click="moveDown(index)"
-                >↓</sw-button>
-                <sw-button
-                    size="x-small"
-                    variant="danger"
+                >↓</mt-button>
+                <mt-button
+                    size="small"
+                    variant="critical"
                     @click="removeField(index)"
-                >✕</sw-button>
+                >✕</mt-button>
             </div>
         </sw-container>
     </div>
 
-    <sw-button
+    <mt-button
         size="small"
-        variant="ghost"
         class="laenen-field-configurator__add"
         @click="addField"
-    >+ Add field</sw-button>
+    >+ Add field</mt-button>
 
 </div>
 {% endblock %}
